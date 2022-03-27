@@ -5,4 +5,4 @@
 3. Мои контакты -
 4. почта bigsobolev@yandex.ru
 5. skype justmaxon
-6. telegram 89163628822
+6. telegram и whatsapp 89163628822
