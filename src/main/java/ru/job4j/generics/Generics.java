@@ -20,6 +20,7 @@ public class Generics {
         System.out.println();
 
         // gen.printBoundedWildCard(first);
+        // эта строка вызывает ошибку компиляции
         gen.printBoundedWildCard(second);
         gen.printBoundedWildCard(third);
         System.out.println();
@@ -27,6 +28,7 @@ public class Generics {
         gen.printLowerBoundedWildCard(first);
         gen.printLowerBoundedWildCard(second);
         // gen.printLowerBoundedWildCard(third);
+        // эта строка вызывает ошибку компиляции
     }
 
     public void printObject(List<?> list) {
