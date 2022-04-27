@@ -57,7 +57,7 @@ public class SimpleArrayList<T> implements List<T> {
         if (container.length <= size) {
             container = Arrays.copyOf(container, container.length * 2);
         }
-        if (container.length <= size) {
+        if (container.length == 0) {
             container = Arrays.copyOf(container, container.length + 10);
         }
     }
