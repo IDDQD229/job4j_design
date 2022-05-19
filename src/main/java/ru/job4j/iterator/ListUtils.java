@@ -14,7 +14,7 @@ public class ListUtils {
 
     public static <T> void addAfter(List<T> list, int index, T value) {
         Objects.checkIndex(index, list.size());
-        ListIterator<T> l = list.listIterator(++index);
+        ListIterator<T> l = list.listIterator(index + 1);
         l.add(value);
     }
 
