@@ -1,9 +1,6 @@
 package ru.job4j.map;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public class User {
@@ -11,6 +8,11 @@ public class User {
     private String name;
     private int children;
     private Calendar birthday;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, children, birthday);
+    }
 
     @Override
     public String toString() {
@@ -33,8 +35,8 @@ public class User {
     }
 
     public static void main(String[] args) {
-        User userFirst = new User("Max", 2, new GregorianCalendar(1993, 7, 15));
-        User userSecond = new User("Max", 2, new GregorianCalendar(1993, 7, 15));
+        User userFirst = new User("Max", 2, new GregorianCalendar(1993, Calendar.AUGUST, 15));
+        User userSecond = new User("Max", 2, new GregorianCalendar(1993, Calendar.AUGUST, 15));
         Map<User, Object> map = new HashMap<>();
         map.put(userFirst, new Object());
         map.put(userSecond, new Object());
