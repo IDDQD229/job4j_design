@@ -2,6 +2,10 @@ package ru.job4j.map;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class User {
 
