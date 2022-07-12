@@ -1,7 +1,9 @@
 package ru.job4j.map;
 
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class SimpleMap<K, V> implements Map<K, V> {
 
@@ -17,21 +19,18 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean put(K key, V value) {
-        boolean insert = true;
-        for (int i = 0; i < count; i++) {
-            if (table[i].key.equals(key)) {
-                table[i].value = value;
-                insert = false;
-            }
-        }
-        if (insert) {
-            expand();
-            table[indexFor(hash(key.hashCode()))] = new MapEntry<K, V>(key, value);
-            modCount++;
+        expand();
+        boolean rsl = false;
+        int index = indexFor(hash(hashCode()));
+        if (table[index] == null) {
+            table[index] = new MapEntry<>(key, value);
+            rsl = true;
             count++;
+            modCount++;
         }
-        return insert;
+        return rsl;
     }
+
 
     private int hash(int hashCode) {
         return hashCode >>> 16;
@@ -45,36 +44,65 @@ public class SimpleMap<K, V> implements Map<K, V> {
         if (count >= table.length * LOAD_FACTOR) {
             int expandSize = table.length * 2;
             table = Arrays.copyOf(table, expandSize);
+            MapEntry<K, V>[] rehash = new MapEntry[capacity];
+            for (int i = 0; i < capacity - 1; i++) {
+                if (table[i] != null) {
+                    int index = indexFor(hash(hashCode()));
+                    if (rehash[index] == null) {
+                        rehash[index] = table[i];
+                    }
+                }
+            }
+            table = Arrays.copyOf(rehash, capacity);
         }
     }
 
     @Override
     public V get(K key) {
-        for (int i = 0; i < count; i++) {
-            if (table[i] != null && table[i].key.equals(key)) {
-                return table[i].value;
-            }
+        V value = null;
+        int index = indexFor(hash(hashCode()));
+        if (table[index] != null && table[index].key.equals(key)) {
+            value = table[index].value;
         }
-        return null;
+        return value;
     }
 
     @Override
     public boolean remove(K key) {
         boolean rsl = false;
-        for (int i = 0; i < count; i++) {
-            if (table[i].key.equals(key)) {
-                table[i] = null;
-                count--;
-                modCount++;
-                rsl = true;
-            }
+        int index = indexFor(hash(hashCode()));
+        if (table[index].key.equals(key)) {
+            table[index] = null;
+            rsl = true;
+            count--;
+            modCount++;
         }
         return rsl;
     }
 
     @Override
-    public Iterator<K> iterator() {
-        return null;
+    public Iterator iterator() {
+
+        return new Iterator<>() {
+            final int expectModCount = modCount;
+            int cursor = 0;
+
+            @Override
+            public boolean hasNext() {
+                if (modCount != expectModCount) {
+                    throw new ConcurrentModificationException();
+                }
+                return cursor < count;
+            }
+
+            @Override
+            public MapEntry<K, V> next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return table[cursor++];
+            }
+        };
     }
 
     private static class MapEntry<K, V> {
